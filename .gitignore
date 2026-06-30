@@ -1,0 +1,30 @@
+# =========================
+# Python
+# =========================
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+# Environment files
+.env
+backend/.env
+frontend/.env
+
+# Firebase credentials
+backend/firebase_credentials.json
+
+# Local storage
+local_data/
+
+# Uploads
+backend/uploads/
+
+# =========================
+# Node.js
+# =========================
+node_modules/
+dist/
+
+# OS files
+.DS_Store

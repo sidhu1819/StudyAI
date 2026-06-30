@@ -1,0 +1,98 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Inter', system-ui, sans-serif;
+  
+  --color-bg-primary: #050505;
+  --color-bg-secondary: #0B0B0B;
+  --color-bg-card: #121212;
+  --color-bg-sidebar: #090909;
+  --color-bg-navbar: #101010;
+  
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #B5B5B5;
+  
+  --color-accent-primary: #00E5FF;
+  --color-accent-secondary: #7C3AED;
+  
+  --color-status-success: #22C55E;
+  --color-status-warning: #F59E0B;
+  --color-status-danger: #EF4444;
+
+  --color-border-subtle: rgba(255, 255, 255, 0.08);
+}
+
+@layer base {
+  body {
+    @apply bg-bg-primary text-text-primary font-sans antialiased overflow-x-hidden;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply bg-bg-card/80 backdrop-blur-xl border border-border-subtle rounded-2xl shadow-xl shadow-black/50;
+  }
+  
+  .glass-panel {
+    @apply bg-white/5 backdrop-blur-md border border-white/10 rounded-xl;
+  }
+
+  .btn-primary {
+    @apply relative overflow-hidden bg-accent-primary text-black font-semibold rounded-xl px-6 py-3 shadow-[0_0_20px_rgba(0,229,255,0.3)] transition-all hover:shadow-[0_0_30px_rgba(0,229,255,0.6)] hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:pointer-events-none;
+  }
+
+  .btn-secondary {
+    @apply bg-bg-secondary border border-border-subtle text-text-primary font-medium rounded-xl px-6 py-3 transition hover:bg-white/5 active:bg-white/10;
+  }
+  
+  .btn-glow-purple {
+    @apply bg-accent-secondary text-white font-semibold rounded-xl px-6 py-3 shadow-[0_0_20px_rgba(124,58,237,0.4)] transition-all hover:shadow-[0_0_30px_rgba(124,58,237,0.7)] hover:-translate-y-0.5;
+  }
+
+  .input-field {
+    @apply w-full bg-bg-secondary border border-border-subtle rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-accent-primary focus:ring-1 focus:ring-accent-primary transition-all;
+  }
+
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-accent-primary to-accent-secondary;
+  }
+}
+
+/* Markdown Styling for Summaries & Schedules */
+.markdown-body {
+  @apply text-text-secondary leading-relaxed;
+}
+.markdown-body h1, .markdown-body h2, .markdown-body h3 {
+  @apply text-text-primary font-bold mt-8 mb-4;
+}
+.markdown-body p {
+  @apply mb-4;
+}
+.markdown-body ul {
+  @apply list-disc list-inside mb-4 pl-4;
+}
+.markdown-body li {
+  @apply mb-2;
+}
+.markdown-body strong {
+  @apply text-white font-semibold;
+}
+.markdown-body blockquote {
+  @apply border-l-4 border-accent-secondary pl-4 my-4 italic bg-white/5 py-2 pr-2 rounded-r-lg;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
