@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 import { motion } from 'framer-motion';
 
 export default function Login() {
@@ -14,7 +14,7 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://127.0.0.1:5000/api/auth/login', { email, password });
+      const res = await api.post('/api/auth/login', { email, password });
       login(res.data.user);
       navigate('/app/dashboard');
     } catch (err) {

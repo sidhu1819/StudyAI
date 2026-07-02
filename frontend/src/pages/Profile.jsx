@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { motion } from 'framer-motion';
 import { Award, Zap, BookOpen } from 'lucide-react';
-import axios from 'axios';
+import api from '../api';
 
 export default function Profile() {
   const { user } = useContext(AuthContext);
@@ -11,7 +11,7 @@ export default function Profile() {
   useEffect(() => {
     const fetchMaterials = async () => {
       try {
-        const res = await axios.get(`http://127.0.0.1:5000/api/materials/${user.id}`);
+        const res = await api.get(`/api/materials/${user.id}`);
         setMaterialsCount(res.data.materials.length);
       } catch (err) {
         console.error(err);

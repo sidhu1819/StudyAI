@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { UploadCloud, FileText, Trash2, Folder, Search, Filter } from 'lucide-react';
-import axios from 'axios';
+import api from '../api';
 import { useNavigate } from 'react-router-dom';
 
 export default function StudyMaterials() {
@@ -22,7 +22,7 @@ export default function StudyMaterials() {
 
   const fetchMaterials = async () => {
     try {
-      const res = await axios.get(`http://127.0.0.1:5000/api/materials/${user.id}`);
+      const res = await api.get(`/api/materials/${user.id}`);
       setMaterials(res.data.materials);
     } catch (err) {
       console.error(err);
@@ -42,7 +42,7 @@ export default function StudyMaterials() {
     if (file) formData.append('file', file);
 
     try {
-      await axios.post('http://127.0.0.1:5000/api/materials/upload', formData);
+      await api.post('/api/materials/upload', formData);
       setShowUploadModal(false);
       setFile(null);
       setTitle('');
@@ -58,7 +58,7 @@ export default function StudyMaterials() {
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this material?")) return;
     try {
-      await axios.delete(`http://127.0.0.1:5000/api/materials/${id}`);
+      await api.delete(`/api/materials/${id}`);
       setMaterials(materials.filter(m => m.id !== id));
     } catch (err) {
       console.error(err);

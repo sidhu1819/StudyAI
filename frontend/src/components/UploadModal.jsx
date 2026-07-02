@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiX, FiUploadCloud, FiFileText } from 'react-icons/fi';
-import axios from 'axios';
+import api from '../api';
 import { AuthContext } from '../context/AuthContext';
 
 const UploadModal = ({ isOpen, onClose, onUploadSuccess }) => {
@@ -42,7 +42,7 @@ const UploadModal = ({ isOpen, onClose, onUploadSuccess }) => {
     }
 
     try {
-      const response = await axios.post('http://127.0.0.1:5000/api/upload', formData, {
+      const response = await api.post('/api/materials/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       onUploadSuccess(response.data.material);

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 import { AuthContext } from '../context/AuthContext';
 import ReactMarkdown from 'react-markdown';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -86,7 +86,7 @@ export default function MaterialView() {
 
   const fetchMaterialsList = async () => {
     try {
-      const res = await axios.get(`http://127.0.0.1:5000/api/materials/${user.id}`);
+      const res = await api.get(`/api/materials/${user.id}`);
       setMaterialsList(res.data.materials);
     } catch (err) {}
   };
@@ -95,10 +95,10 @@ export default function MaterialView() {
     setLoading(true);
     try {
       const [sumRes, flashRes, quizRes, schedRes] = await Promise.all([
-        axios.get(`http://127.0.0.1:5000/api/summary/${id}`),
-        axios.get(`http://127.0.0.1:5000/api/flashcards/${id}`),
-        axios.get(`http://127.0.0.1:5000/api/quiz/${id}`),
-        axios.get(`http://127.0.0.1:5000/api/schedule/${id}`)
+        api.get(`/api/summary/${id}`),
+        api.get(`/api/flashcards/${id}`),
+        api.get(`/api/quiz/${id}`),
+        api.get(`/api/schedule/${id}`)
       ]);
       setSummary(sumRes.data.summary);
       setFlashcards(flashRes.data.flashcardSet);
@@ -114,7 +114,7 @@ export default function MaterialView() {
   const handleGenerate = async (type) => {
     setGenerating(true);
     try {
-      const res = await axios.post(`http://127.0.0.1:5000/api/${type}`, { material_id: id, user_id: user.id });
+      const res = await api.post(`/api/${type}`, { material_id: id, user_id: user.id });
       if (type === 'summary') setSummary(res.data.summary);
       if (type === 'flashcards') {
         setFlashcards(res.data.flashcardSet);

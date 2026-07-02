@@ -3,7 +3,7 @@ import { AuthContext } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Book, Clock, FileText, UploadCloud, Layers, Edit3, FolderOpen, ArrowRight } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import axios from 'axios';
+import api from '../api';
 import { useNavigate } from 'react-router-dom';
 
 const StatCard = ({ icon: Icon, title, value, subtitle, delay }) => (
@@ -33,7 +33,7 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchMaterials = async () => {
       try {
-        const res = await axios.get(`http://127.0.0.1:5000/api/materials/${user.id}`);
+        const res = await api.get(`/api/materials/${user.id}`);
         setMaterials(res.data.materials);
       } catch (err) {
         console.error(err);
