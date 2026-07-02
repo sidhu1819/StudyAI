@@ -31,6 +31,7 @@ export const AuthProvider = ({ children }) => {
       const response = await api.post('/api/auth/login', { email, password });
       setUser(response.data.user);
       localStorage.setItem('studyai_user_v3', JSON.stringify(response.data.user));
+      localStorage.setItem('studyai_token_v3', response.data.token);
       return { success: true };
     } catch (error) {
       return { success: false, message: error.response?.data?.message || 'Login failed' };
@@ -42,6 +43,7 @@ export const AuthProvider = ({ children }) => {
       const response = await api.post('/api/auth/register', { name, email, password });
       setUser(response.data.user);
       localStorage.setItem('studyai_user_v3', JSON.stringify(response.data.user));
+      localStorage.setItem('studyai_token_v3', response.data.token);
       return { success: true };
     } catch (error) {
       return { success: false, message: error.response?.data?.message || 'Registration failed' };
@@ -51,6 +53,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     localStorage.removeItem('studyai_user_v3');
+    localStorage.removeItem('studyai_token_v3');
   };
 
   return (

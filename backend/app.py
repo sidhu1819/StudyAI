@@ -11,8 +11,18 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
     
-    # Configure CORS for production and development
-    CORS(app)
+    # Configure CORS for production and development explicitly
+    CORS(app, resources={r"/api/*": {
+        "origins": [
+            "https://studyai-frontend-mdph.onrender.com", 
+            "http://localhost:5173", 
+            "http://127.0.0.1:5173",
+            "http://localhost:5000",
+            "http://127.0.0.1:5000"
+        ],
+        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"]
+    }})
 
     # Initialize Firebase if credentials exist
     try:
