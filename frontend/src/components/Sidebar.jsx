@@ -1,14 +1,12 @@
 import { NavLink } from 'react-router-dom';
-import { FiHome, FiBook, FiCpu, FiLayers, FiEdit3, FiCalendar, FiPieChart, FiSettings, FiLogOut } from 'react-icons/fi';
+import { Home, Book, Settings, LogOut } from 'lucide-react';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { motion } from 'framer-motion';
 
 const navItems = [
-  { name: 'Dashboard', path: '/dashboard', icon: FiHome },
-  { name: 'Study Materials', path: '/materials', icon: FiBook },
-  { name: 'Analytics', path: '/analytics', icon: FiPieChart },
-  { name: 'Study Planner', path: '/planner', icon: FiCalendar },
+  { name: 'Dashboard', path: '/app/dashboard', icon: Home },
+  { name: 'Study Materials', path: '/app/materials', icon: Book },
 ];
 
 export default function Sidebar() {
@@ -54,20 +52,20 @@ export default function Sidebar() {
 
       <div className="mt-auto space-y-2 pt-4 border-t border-border-subtle">
         <NavLink
-          to="/settings"
+          to="/app/settings"
           className={({ isActive }) =>
             `flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
               isActive ? 'bg-white/10 text-white font-semibold' : 'text-text-secondary hover:text-white hover:bg-white/5'
             }`
           }
         >
-          <FiSettings size={20} /> Settings
+          <Settings size={20} /> Settings
         </NavLink>
         <button
           onClick={logout}
           className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-status-danger hover:bg-status-danger/10 text-left"
         >
-          <FiLogOut size={20} /> Logout
+          <LogOut size={20} /> Logout
         </button>
       </div>
     </div>

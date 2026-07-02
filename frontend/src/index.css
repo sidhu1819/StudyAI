@@ -4,13 +4,13 @@
   --font-sans: 'Inter', system-ui, sans-serif;
   
   --color-bg-primary: #050505;
-  --color-bg-secondary: #0B0B0B;
-  --color-bg-card: #121212;
+  --color-bg-secondary: #0C0C0C;
+  --color-bg-card: #111111;
   --color-bg-sidebar: #090909;
   --color-bg-navbar: #101010;
   
   --color-text-primary: #FFFFFF;
-  --color-text-secondary: #B5B5B5;
+  --color-text-secondary: #BDBDBD;
   
   --color-accent-primary: #00E5FF;
   --color-accent-secondary: #7C3AED;
@@ -19,7 +19,7 @@
   --color-status-warning: #F59E0B;
   --color-status-danger: #EF4444;
 
-  --color-border-subtle: rgba(255, 255, 255, 0.08);
+  --color-border-subtle: rgba(255, 255, 255, 0.06);
 }
 
 @layer base {

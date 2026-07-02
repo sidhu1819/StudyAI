@@ -1,4 +1,4 @@
-import { FiSearch, FiBell } from 'react-icons/fi';
+import { Search, Bell } from 'lucide-react';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 
@@ -15,7 +15,7 @@ export default function TopNav() {
     <header className="h-20 bg-bg-navbar/80 backdrop-blur-md border-b border-border-subtle sticky top-0 z-40 flex items-center justify-between px-8">
       <div className="flex-1 max-w-xl">
         <div className="relative group">
-          <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary group-focus-within:text-accent-primary transition-colors" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary group-focus-within:text-accent-primary transition-colors" size={18} />
           <input 
             type="text" 
             placeholder="Search notes, flashcards, or ask AI (Cmd+K)" 
@@ -34,7 +34,7 @@ export default function TopNav() {
         </div>
 
         <button className="relative p-2 text-text-secondary hover:text-white transition-colors">
-          <FiBell size={20} />
+          <Bell size={20} />
           <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-accent-secondary rounded-full shadow-[0_0_8px_rgba(124,58,237,0.8)]"></span>
         </button>
 

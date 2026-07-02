@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiUploadCloud, FiFileText, FiMoreVertical, FiTrash2, FiFolder, FiSearch, FiFilter } from 'react-icons/fi';
+import { UploadCloud, FileText, Trash2, Folder, Search, Filter } from 'lucide-react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -14,6 +14,7 @@ export default function StudyMaterials() {
   const [uploading, setUploading] = useState(false);
   const [file, setFile] = useState(null);
   const [title, setTitle] = useState('');
+  const [isDragActive, setIsDragActive] = useState(false);
 
   useEffect(() => {
     fetchMaterials();
@@ -75,13 +76,13 @@ export default function StudyMaterials() {
           onClick={() => setShowUploadModal(true)}
           className="btn-primary flex items-center gap-2"
         >
-          <FiUploadCloud size={20} /> New Upload
+          <UploadCloud size={20} /> New Upload
         </button>
       </div>
 
       <div className="flex gap-4 mb-8">
         <div className="relative flex-1 max-w-md">
-          <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary" size={18} />
           <input 
             type="text" 
             placeholder="Search materials..." 
@@ -89,7 +90,7 @@ export default function StudyMaterials() {
           />
         </div>
         <button className="btn-secondary flex items-center gap-2">
-          <FiFilter /> Filter
+          <Filter size={18} /> Filter
         </button>
       </div>
 
@@ -103,7 +104,7 @@ export default function StudyMaterials() {
         ) : materials.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-64 glass rounded-2xl border-dashed">
             <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mb-4">
-              <FiFolder className="text-3xl text-text-secondary" />
+              <Folder className="text-3xl text-text-secondary" />
             </div>
             <h3 className="text-xl font-bold text-white mb-2">No materials yet</h3>
             <p className="text-text-secondary mb-6">Upload your first document to get started.</p>
@@ -121,23 +122,23 @@ export default function StudyMaterials() {
                   exit={{ opacity: 0, scale: 0.9 }}
                   whileHover={{ y: -5 }}
                   className="glass p-5 flex flex-col group cursor-pointer"
-                  onClick={() => navigate(`/material/${m.id}`)}
+                  onClick={() => navigate(`/app/material/${m.id}`)}
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div className="w-12 h-12 bg-accent-primary/10 rounded-xl flex items-center justify-center text-accent-primary">
-                      <FiFileText size={24} />
+                      <FileText size={24} />
                     </div>
                     <button 
                       onClick={(e) => { e.stopPropagation(); handleDelete(m.id); }}
                       className="text-text-secondary hover:text-status-danger transition-colors p-2 rounded-lg hover:bg-status-danger/10 opacity-0 group-hover:opacity-100"
                     >
-                      <FiTrash2 />
+                      <Trash2 size={18} />
                     </button>
                   </div>
                   <h3 className="text-lg font-bold text-white mb-2 line-clamp-2 leading-tight">{m.title}</h3>
                   <div className="mt-auto pt-4 flex items-center justify-between text-xs text-text-secondary font-medium">
                     <span>{new Date(m.created_at).toLocaleDateString()}</span>
-                    <span className="flex items-center gap-1"><FiFileText /> Doc</span>
+                    <span className="flex items-center gap-1"><FileText size={12} /> {m.content ? Math.round(m.content.length / 5) : 0} words</span>
                   </div>
                 </motion.div>
               ))}
@@ -175,18 +176,34 @@ export default function StudyMaterials() {
                   />
                 </div>
 
-                <div className="relative border-2 border-dashed border-border-subtle rounded-2xl p-8 text-center hover:bg-white/5 transition-colors group cursor-pointer">
+                <div 
+                  className={`relative border-2 border-dashed rounded-2xl p-8 text-center transition-all duration-300 group cursor-pointer ${
+                    isDragActive 
+                      ? 'border-accent-primary bg-accent-primary/5 shadow-[0_0_30px_rgba(0,229,255,0.15)]' 
+                      : 'border-border-subtle hover:bg-white/5'
+                  }`}
+                  onDragEnter={(e) => { e.preventDefault(); setIsDragActive(true); }}
+                  onDragLeave={(e) => { e.preventDefault(); setIsDragActive(false); }}
+                  onDragOver={(e) => { e.preventDefault(); setIsDragActive(true); }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    setIsDragActive(false);
+                    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                      setFile(e.dataTransfer.files[0]);
+                    }
+                  }}
+                >
                   <input 
                     type="file" 
                     onChange={(e) => setFile(e.target.files[0])}
                     accept=".pdf,.docx,.txt"
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                   />
-                  <div className="w-16 h-16 bg-accent-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                    <FiUploadCloud className="text-3xl text-accent-primary" />
+                  <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 transition-transform duration-300 ${isDragActive ? 'bg-accent-primary/20 scale-110' : 'bg-accent-primary/10 group-hover:scale-110'}`}>
+                    <UploadCloud className={`text-3xl ${isDragActive ? 'text-accent-primary drop-shadow-[0_0_8px_rgba(0,229,255,0.8)]' : 'text-accent-primary'}`} size={32} />
                   </div>
                   <p className="text-white font-semibold mb-1">
-                    {file ? file.name : 'Click or drag file to upload'}
+                    {file ? file.name : (isDragActive ? 'Drop file here' : 'Click or drag file to upload')}
                   </p>
                   <p className="text-sm text-text-secondary">PDF, DOCX up to 10MB</p>
                 </div>

@@ -6,6 +6,9 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import StudyMaterials from './pages/StudyMaterials';
 import MaterialView from './pages/MaterialView';
+import Home from './pages/Home';
+import Profile from './pages/Profile';
+import Settings from './pages/Settings';
 import Layout from './components/Layout';
 
 const ProtectedRoute = ({ children }) => {
@@ -30,17 +33,17 @@ const AppRoutes = () => {
   return (
     <Router>
       <Routes>
+        <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Navigate to="/dashboard" replace />} />
+        <Route path="/app" element={<Layout />}>
+          <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="materials" element={<StudyMaterials />} />
           <Route path="material/:id" element={<MaterialView />} />
-          <Route path="analytics" element={<div className="p-8 text-white">Analytics Coming Soon</div>} />
-          <Route path="planner" element={<div className="p-8 text-white">Study Planner Coming Soon</div>} />
-          <Route path="settings" element={<div className="p-8 text-white">Settings Coming Soon</div>} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="settings" element={<Settings />} />
         </Route>
       </Routes>
     </Router>
