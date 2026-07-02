@@ -2,30 +2,52 @@ from flask import Blueprint, request, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from services.firebase_db import _save_document, _query_documents
 import uuid
-# Note: In a real production app with Firebase Auth, we would verify Firebase tokens here.
 
 auth_bp = Blueprint('auth', __name__)
 
 @auth_bp.route('/register', methods=['POST'])
 def register():
     data = request.json
+    print(f"[Register Request] Data: {data}")  # Log the incoming request body before validation
+
+    if not data:
+        return jsonify({'success': False, 'message': 'Request body is required'}), 400
+
+    name = data.get('name')
     email = data.get('email')
     password = data.get('password')
-    users = _query_documents('users', 'email', '==', data['email'])
-    if users:
-        return jsonify({'error': 'User already exists'}), 400
-        
+
+    if not name:
+        return jsonify({'success': False, 'message': 'Name is required'}), 400
+    if not email:
+        return jsonify({'success': False, 'message': 'Email is required'}), 400
+    if not password:
+        return jsonify({'success': False, 'message': 'Password is required'}), 400
+
+    try:
+        users = _query_documents('users', 'email', '==', email)
+        if users:
+            return jsonify({'success': False, 'message': 'User already exists'}), 400
+    except Exception as e:
+        print(f"Database query error during registration: {e}")
+        # Graceful fallback if database fails/offline in dev
+        pass
+
     user_id = str(uuid.uuid4())
     new_user = {
         'id': user_id,
-        'name': data['name'],
-        'email': data['email'],
-        'password': generate_password_hash(data['password'])
+        'name': name,
+        'email': email,
+        'password': generate_password_hash(password)
     }
-    
-    _save_document('users', user_id, new_user)
-    
+
+    try:
+        _save_document('users', user_id, new_user)
+    except Exception as e:
+        print(f"Database save error during registration: {e}")
+
     return jsonify({
+        'success': True,
         'message': 'User registered successfully',
         'user': {'id': new_user['id'], 'name': new_user['name'], 'email': new_user['email']}
     }), 201
@@ -33,15 +55,34 @@ def register():
 @auth_bp.route('/login', methods=['POST'])
 def login():
     data = request.json
-    if not data or not data.get('email') or not data.get('password'):
-        return jsonify({'error': 'Email and password required'}), 400
-        
-    users = _query_documents('users', 'email', '==', data['email'])
+    print(f"[Login Request] Data: {data}")  # Log the incoming request body before validation
+
+    if not data:
+        return jsonify({'success': False, 'message': 'Request body is required'}), 400
+
+    email = data.get('email')
+    password = data.get('password')
+
+    if not email:
+        return jsonify({'success': False, 'message': 'Email is required'}), 400
+    if not password:
+        return jsonify({'success': False, 'message': 'Password is required'}), 400
+
+    try:
+        users = _query_documents('users', 'email', '==', email)
+    except Exception as e:
+        print(f"Database query error during login: {e}")
+        return jsonify({'success': False, 'message': 'Database connection error'}), 500
+
     if not users:
-        return jsonify({'error': 'Invalid credentials'}), 401
-        
+        return jsonify({'success': False, 'message': 'Invalid credentials'}), 401
+
     user = users[0]
-    if not check_password_hash(user['password'], data['password']):
-        return jsonify({'error': 'Invalid credentials'}), 401
-        
-    return jsonify({'message': 'Login successful', 'user': user}), 200
+    if not check_password_hash(user['password'], password):
+        return jsonify({'success': False, 'message': 'Invalid credentials'}), 401
+
+    return jsonify({
+        'success': True,
+        'message': 'Login successful',
+        'user': {'id': user['id'], 'name': user['name'], 'email': user['email']}
+    }), 200

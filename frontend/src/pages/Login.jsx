@@ -1,7 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
-import api from '../api';
 import { motion } from 'framer-motion';
 
 export default function Login() {
@@ -10,15 +9,22 @@ export default function Login() {
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
   const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const res = await api.post('/api/auth/login', { email, password });
-      login(res.data.user);
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    setError('');
+    console.log("Login request fired");
+    
+    const res = await login(email, password);
+    setIsSubmitting(false);
+    
+    if (res.success) {
       navigate('/app/dashboard');
-    } catch (err) {
-      setError(err.response?.data?.error || 'Login failed');
+    } else {
+      setError(res.message);
     }
   };
 
@@ -72,8 +78,8 @@ export default function Login() {
               placeholder="••••••••"
             />
           </div>
-          <button type="submit" className="w-full btn-primary mt-4">
-            Sign In
+          <button type="submit" disabled={isSubmitting} className="w-full btn-primary mt-4 disabled:opacity-50">
+            {isSubmitting ? 'Signing In...' : 'Sign In'}
           </button>
         </form>
 

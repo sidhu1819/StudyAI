@@ -1,25 +1,24 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
-import api from '../api';
 import { motion } from 'framer-motion';
 
 export default function Register() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { login } = useContext(AuthContext);
+  const { register } = useContext(AuthContext);
   const navigate = useNavigate();
   const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const res = await api.post('/api/auth/register', { name, email, password });
-      login(res.data.user);
+    setError('');
+    const res = await register(name, email, password);
+    if (res.success) {
       navigate('/app/dashboard');
-    } catch (err) {
-      setError(err.response?.data?.error || 'Registration failed');
+    } else {
+      setError(res.message);
     }
   };
 
