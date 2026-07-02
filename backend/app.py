@@ -5,21 +5,31 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 import json
 import os
+import sys
 
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
+    
+    # Configure CORS for production and development
     CORS(app)
 
     # Initialize Firebase if credentials exist
     try:
-        cred_path = os.path.join(os.path.dirname(__file__), 'firebase_credentials.json')
-        if os.path.exists(cred_path):
-            cred = credentials.Certificate(cred_path)
+        local_cred_path = os.path.join(os.path.dirname(__file__), 'firebase_credentials.json')
+        render_cred_path = '/etc/secrets/firebase_credentials.json'
+        
+        if os.path.exists(local_cred_path):
+            cred = credentials.Certificate(local_cred_path)
             firebase_admin.initialize_app(cred)
-            print("Firebase Connected Successfully")
+            print("Firebase Connected Successfully (Local)")
+        elif os.path.exists(render_cred_path):
+            cred = credentials.Certificate(render_cred_path)
+            firebase_admin.initialize_app(cred)
+            print("Firebase Connected Successfully (Render)")
         else:
-            print("WARNING: firebase_credentials.json not found in backend directory!")
+            print("ERROR: firebase_credentials.json not found in backend directory or /etc/secrets!")
+            print("Meaningful Startup Error: Firebase credentials are required for the application to function properly.")
     except ValueError:
         # App already initialized
         print("Firebase Connected Successfully")
@@ -36,12 +46,23 @@ def create_app():
     app.register_blueprint(materials_bp, url_prefix='/api/materials')
     app.register_blueprint(ai_bp, url_prefix='/api')
 
-    @app.route('/health', methods=['GET'])
+    @app.route('/api/health', methods=['GET'])
     def health_check():
-        return jsonify({"status": "healthy", "storage": "local" if app.config['USE_LOCAL_STORAGE'] else "firebase"}), 200
+        return jsonify({
+            "status": "ok",
+            "message": "StudyAI API is running"
+        }), 200
 
     return app
 
+# Expose app object for gunicorn (Required for Render Start Command: gunicorn app:app)
+app = create_app()
+
 if __name__ == '__main__':
-    app = create_app()
-    app.run(debug=True, port=5000)
+    port = int(os.environ.get("PORT", 5000))
+    
+    # Disable debug mode in production (e.g., if RENDER env var is present)
+    is_development = os.environ.get("RENDER") is None
+    
+    # Bind to 0.0.0.0 for Render deployments to avoid port binding errors
+    app.run(host="0.0.0.0", port=port, debug=is_development)
